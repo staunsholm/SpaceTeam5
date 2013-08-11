@@ -1,12 +1,17 @@
 {
-    "description": "A poc html5 version of SpaceTeam.",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/staunsholm/SpaceTeam5.git"
-    },
-    "dependencies": {
-        "smokesignals": "*",
-        "socket.io-client": "*",
-        "socket.io": "*"
-    }
+  "description": "A poc html5 version of SpaceTeam.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/staunsholm/SpaceTeam5.git"
+  },
+  "dependencies": {
+    "smokesignals": "*",
+    "socket.io-client": "*",
+    "socket.io": "*"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt-shell": "~0.3.1"
+  }
 }

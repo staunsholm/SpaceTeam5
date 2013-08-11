@@ -1,7 +1,9 @@
-var EventEmitter = require('EventEmitter');
-
+// setup
 var latency = 80;
+var currentLatency = 0;
+var connections = [];
 
+// setup socket.io
 var express = require('express');
 var app = express();
 app.configure(function () {
@@ -18,55 +20,49 @@ io.enable('browser client gzip');          // gzip the file
 io.set('log level', 2);                    // reduce logging
 io.set('transports', ['websocket', 'flashsocket', 'htmlfile', 'xhr-polling', 'jsonp-polling']);
 
-var playerState = {
-    position: 0,
-    jump: 0,
-    startMovingForward: 0,
-    startMovingBackward: 0
+// setup game
+var game = {
+    actions: [
+        {id: 1, label: "Flux Capacitor", type: "bool", value: 0},
+        {id: 2, label: "Gamma Inducer", type: "bool", value: 0},
+        {id: 3, label: "Sky Connector", type: "bool", value: 1}
+    ],
+    messages: [
+        {wantedActionId: 1, wantedValue: 1, message: 'Start the Flux Capacitor'},
+        {wantedActionId: 2, wantedValue: 1, message: 'Enable Gamma Inducer'},
+        {wantedActionId: 3, wantedValue: 0, message: 'Turn off the Sky Connector'}
+    ],
+    score: 0
 };
 
-var currentLatency = 0;
-var speed = 0.1;
-var connections = [];
+function resetGame() {
+    game.score = 0;
+}
 
+// handle connections
 io.sockets.on('connection', function (socket) {
     socket.connectionId = connections.length;
     socket.isDirty = true;
-    socket.state = {
-        position: 0,
-        startJump: 0,
-        startMovingForward: 0,
-        startMovingBackward: 0
-    }
     connections.push(socket);
 
+    // send game info to client
+    socket.emit('game', game);
+
+    // player did something right
+    socket.on('actionSuccess', function () {
+        game.score++;
+        socket.isDirty = true;
+    });
+
+    // remove client from connections list
     socket.on('disconnect', function () {
         connections.splice(socket.connectionId, 1);
+        if (connections.length === 0) {
+            resetGame();
+        }
     });
 
-    socket.on('jump', function () {
-        socket.state.startJump = Date.now();
-        socket.isDirty = true;
-    });
-
-    socket.on('moveForward', function () {
-        socket.state.startMovingForward = Date.now();
-        socket.isDirty = true;
-    });
-
-    socket.on('moveBackward', function () {
-        socket.state.startMovingBackward = Date.now();
-        socket.isDirty = true;
-    });
-
-    socket.on('stop', function () {
-        updatePosition(socket.state);
-        socket.state.startMovingForward = 0;
-        socket.state.startMovingBackward = 0;
-
-        socket.isDirty = true;
-    });
-
+    // calculate current latency
     socket.on('pong', function (t) {
         currentLatency = Date.now() - t;
     });
@@ -76,23 +72,14 @@ io.sockets.on('connection', function (socket) {
     }, 5000);
 });
 
-function updatePosition(state) {
-    if (state.startMovingForward) {
-        state.position += (Date.now() - state.startMovingForward) * speed;
-    }
-    if (state.startMovingBackward) {
-        state.position -= (Date.now() - state.startMovingBackward) * speed;
-    }
-}
-
+// communicate changes to connected clients, throttled by a specified latency
 setInterval(function () {
     var connection;
     for (var i = 0, l = connections.length; i < l; i++) {
         connection = connections[i];
         if (connection.isDirty) {
             connection.isDirty = false;
-            updatePosition(connection.state);
-            connection.emit("state", connection.state);
+            connection.emit("score", connection.state.score);
         }
     }
 }, latency);
