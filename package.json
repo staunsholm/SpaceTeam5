@@ -1,0 +1,12 @@
+{
+    "description": "A poc html5 version of SpaceTeam.",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/staunsholm/SpaceTeam5.git"
+    },
+    "dependencies": {
+        "smokesignals": "*",
+        "socket.io-client": "*",
+        "socket.io": "*"
+    }
+}

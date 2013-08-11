@@ -1,0 +1,6 @@
+{
+    "name": "SpaceTeam5",
+    "dependencies": {
+        "jquery": "*"
+    }
+}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SpaceTeam5</title>
+
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+        }
+
+        #message {
+            padding: 10px;
+            background: #ccc;
+            color: #000;
+        }
+
+        #score {
+            padding: 20px;
+            background: red;
+        }
+
+        #ui button {
+            width: 100px;
+            height: 100px;
+            border: 0;
+            background: grey;
+            margin: 20px;
+        }
+        #ui button.on {
+            background: white;
+        }
+        #timer {
+            background: lightgreen;
+            height: 20px;
+            width: 100%;
+            transition: width 0.25s;
+            -webkit-transition: width 0.25s;
+        }
+    </style>
+</head>
+<body>
+
+<div id="message"></div>
+<div id="score"></div>
+<div id="timer"></div>
+<div id="ui"></div>
+
+<script src="../node_modules/smokesignals/smokesignals.min.js"></script>
+<script src="../node_modules/socket.io-client/dist/socket.io.min.js"></script>
+
+<script src="DashBoard.js"></script>
+<script src="Events.js"></script>
+<script src="Game.js"></script>
+<script src="Main.js"></script>
+<script src="Network.js"></script>
+<script src="Timer.js"></script>
+<script src="Message.js"></script>
+
+<script>Main.start();</script>
+
+</body>
+</html>
