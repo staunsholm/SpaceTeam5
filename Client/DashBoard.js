@@ -20,10 +20,7 @@ DashBoard.init = function (actions) {
                     e.target.action.value = e.target.action.value ? 0 : 1;
                     e.target.className = e.target.action.value ? "on" : "";
 
-                    Events.game.emit('action changed', {
-                        action: e.target.action,
-                        newValue: e.target.action.value
-                    });
+                    Game.actionChanged(e.target.action);
                 });
 
                 btn.innerHTML = actions[i].label;

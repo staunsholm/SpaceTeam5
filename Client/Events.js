@@ -1,9 +1,7 @@
 var Events = {};
 
-Events.game = {};
+Events.timeout = {};
 
 Events.init = function () {
-    smokesignals.convert(Events.game);
-
-    Events.game.on('game start', Game.start);
+    smokesignals.convert(Events.timeout);
 };

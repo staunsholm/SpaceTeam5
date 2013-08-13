@@ -7,11 +7,19 @@ Timer.init = function (speed) {
 
     var timerUI = document.getElementById('timer');
 
-    setInterval(function () {
+    function tick() {
         var w = (Timer.time - Date.now()) / 1000 * Timer.speed;
 
+        if (w <= 0) {
+            Events.timeout.emit();
+            return;
+        }
+
         timerUI.style.width = (100 + w) + "%";
-    }, 500);
+
+        setTimeout(tick, 500);
+    }
+    tick();
 }
 
 Timer.reset = function () {

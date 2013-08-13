@@ -7,22 +7,7 @@ Game.start = function (data) {
 
     DashBoard.init(data.actions);
 
-    Events.game.on('action changed', function (value) {
-        if (Message.currentMessage.wantedValue === value.newValue &&
-            Message.currentMessage.wantedActionId === value.action.id) {
-            actionSuccess();
-        }
-    });
-
     Game.updateScore();
-
-    function actionSuccess() {
-        Game.updateScore();
-
-        Message.update();
-
-        Network.actionSuccess();
-    }
 
     Timer.init(1);
 };
@@ -32,4 +17,16 @@ Game.updateScore = function (score) {
         Game.data.score = score;
     }
     Game.scoreElement.innerHTML = Game.data.score;
+};
+
+Game.actionChanged = function (action) {
+    if (Message.currentMessage.wantedValue === action.newValue &&
+        Message.currentMessage.wantedActionId === action.id) {
+
+        Game.updateScore();
+
+        Message.update();
+
+        Network.actionSuccess();
+    }
 };

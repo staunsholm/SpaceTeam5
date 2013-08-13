@@ -6,6 +6,10 @@ Network.joinGame = function (name, onSuccess) {
 
     var socket = io.connect('127.0.0.1:8080');
 
+    socket.on('connect', function () {
+        socket.emit('join', name);
+    });
+
     socket.on('game', function (data) {
         console.log(data);
         onSuccess(data);
@@ -13,7 +17,6 @@ Network.joinGame = function (name, onSuccess) {
 
     socket.on('score', function (score) {
         Game.updateScore(score);
-
     });
 
     socket.on('message', function (message) {
