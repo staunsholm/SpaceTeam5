@@ -13,6 +13,8 @@ module.exports = function Game(name) {
         {id: 8, label: "Liquid Sampler", type: "bool"}
     ];
 
+    var availableActions = allActions.slice(0); // clone
+
     var actionPrefixes = [
         {text: 'Start the', value: 1},
         {text: 'Stop the', value: 0},
@@ -27,7 +29,7 @@ module.exports = function Game(name) {
 
     // create array containing 4 random actions, no action is available to more than one player
     this.createActions = function () {
-        if (allActions.length < 4) {
+        if (availableActions.length < 4) {
             console.log("no more actions available");
             return [];
         }
@@ -35,9 +37,9 @@ module.exports = function Game(name) {
         var actions = [];
         var actionIndex;
         for (var i = 0; i < 4; i++) {
-            actionIndex = Math.random() * allActions.length | 0;
-            actions.push(allActions[actionIndex]);
-            allActions.splice(actionIndex, 1);
+            actionIndex = Math.random() * availableActions.length | 0;
+            actions.push(availableActions[actionIndex]);
+            availableActions.splice(actionIndex, 1);
         }
 
         return actions;

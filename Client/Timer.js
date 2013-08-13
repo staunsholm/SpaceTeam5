@@ -9,8 +9,9 @@ Timer.init = function (speed) {
 
     function tick() {
         var w = (Timer.time - Date.now()) / 1000 * Timer.speed;
+        console.log(w);
 
-        if (w <= 0) {
+        if (w <= -100) {
             Events.timeout.emit();
             return;
         }

@@ -54,6 +54,8 @@ io.sockets.on('connection', function (socket) {
     socket.on('actionSuccess', function () {
         socket.game.score++;
         socket.isDirty = true;
+
+        socket.emit('message', socket.game.createMessage(actions));
     });
 
     // remove client from connections list
