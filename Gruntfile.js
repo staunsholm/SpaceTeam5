@@ -8,7 +8,7 @@ module.exports = function (grunt) {
                 options: {
                     stdout: true
                 },
-                command: 'node Server/Server.js'
+                command: 'nodemon Server/Server.js'
             }
         },
         uglify: {
@@ -29,5 +29,4 @@ module.exports = function (grunt) {
     // Default task(s).
     grunt.registerTask('default', []);
     grunt.registerTask('server', ['shell']);
-
 };

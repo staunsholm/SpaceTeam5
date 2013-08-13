@@ -21,23 +21,70 @@ io.set('log level', 2);                    // reduce logging
 io.set('transports', ['websocket', 'flashsocket', 'htmlfile', 'xhr-polling', 'jsonp-polling']);
 
 // setup game
+var allActions = [
+    {id: 1, label: "Flux Capacitor", type: "bool"},
+    {id: 2, label: "Gamma Inducer", type: "bool"},
+    {id: 3, label: "Sky Connector", type: "bool"},
+    {id: 4, label: "Bunglow Shout Deterrer", type: "bool"},
+    {id: 5, label: "Spike Wheel Upfuscator", type: "bool"},
+    {id: 6, label: "Space Radiator", type: "bool"},
+    {id: 7, label: "Lambda Uglifier", type: "bool"},
+    {id: 8, label: "Liquid Sampler", type: "bool"}
+];
+var availableActions;
+
+var actionPrefixes = [
+    {text: 'Start the', value: 1},
+    {text: 'Stop the', value: 0},
+    {text: 'Turn on', value: 1},
+    {text: 'Turn off', value: 0},
+    {text: 'Enable', value: 1},
+    {text: 'Disable', value: 0}
+];
+
 var game = {
-    actions: [
-        {id: 1, label: "Flux Capacitor", type: "bool", value: 0},
-        {id: 2, label: "Gamma Inducer", type: "bool", value: 0},
-        {id: 3, label: "Sky Connector", type: "bool", value: 1}
-    ],
-    messages: [
-        {wantedActionId: 1, wantedValue: 1, message: 'Start the Flux Capacitor'},
-        {wantedActionId: 2, wantedValue: 1, message: 'Enable Gamma Inducer'},
-        {wantedActionId: 3, wantedValue: 0, message: 'Turn off the Sky Connector'}
-    ],
     score: 0
 };
 
+// create array containing 4 random actions, no action is available to more than one player
+function createActions() {
+    if (availableActions.length < 4) {
+        console.log("no more actions available");
+        return [];
+    }
+
+    var actions = [];
+    var actionIndex;
+    for (var i = 0; i < 4; i++) {
+        actionIndex = Math.random() * availableActions.length | 0;
+        actions.push(availableActions[actionIndex]);
+        availableActions.splice(actionIndex, 1);
+    }
+
+    return actions;
+}
+
+// create a random message
+function createMessage(actions) {
+    var action = allActions[Math.random() * allActions.length | 0];
+    var prefix = actionPrefixes[Math.random() * actionPrefixes.length | 0];
+
+    var message = {
+        message: prefix.text + " "+ action.label,
+        wantedActionId: action.id,
+        wantedValue: prefix.value
+    };
+
+    return message;
+}
+
+// reset game. is called at server startup and if no player is connected
 function resetGame() {
     game.score = 0;
+
+    availableActions = allActions.slice(0); // clone array
 }
+resetGame();
 
 // handle connections
 io.sockets.on('connection', function (socket) {
@@ -46,7 +93,13 @@ io.sockets.on('connection', function (socket) {
     connections.push(socket);
 
     // send game info to client
-    socket.emit('game', game);
+    var actions = createActions();
+    socket.emit('game', {
+        score: game.score,
+        actions: actions
+    });
+
+    socket.emit('message', createMessage(actions));
 
     // player did something right
     socket.on('actionSuccess', function () {
@@ -79,7 +132,7 @@ setInterval(function () {
         connection = connections[i];
         if (connection.isDirty) {
             connection.isDirty = false;
-            connection.emit("score", connection.state.score);
+            connection.emit("score", game.score);
         }
     }
 }, latency);

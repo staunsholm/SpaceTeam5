@@ -1,9 +1,9 @@
 var Game = {};
 
+Game.scoreElement = document.getElementById('score');
+
 Game.start = function (data) {
     Game.data = data;
-
-    Game.score = 0;
 
     DashBoard.init(data.actions);
 
@@ -14,20 +14,22 @@ Game.start = function (data) {
         }
     });
 
-    var scoreElement = document.getElementById('score');
-    scoreElement.innerHTML = Game.score;
+    Game.updateScore();
 
     function actionSuccess() {
-        Game.score++;
-
-        scoreElement.innerHTML = Game.score;
+        Game.updateScore();
 
         Message.update();
 
         Network.actionSuccess();
     }
 
-    Message.update();
-
     Timer.init(1);
+};
+
+Game.updateScore = function (score) {
+    if (score !== undefined) {
+        Game.data.score = score;
+    }
+    Game.scoreElement.innerHTML = Game.data.score;
 };
