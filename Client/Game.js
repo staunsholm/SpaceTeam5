@@ -2,14 +2,12 @@ var Game = {};
 
 Game.scoreElement = document.getElementById('score');
 
-Game.start = function (data) {
-    Game.data = data;
-
-    DashBoard.init(data.actions);
+Game.start = function () {
+    DashBoard.init(Game.data.actions);
 
     Game.updateScore();
 
-    Timer.init(1);
+    Timer.init(10);
 };
 
 Game.updateScore = function (score) {
@@ -20,13 +18,9 @@ Game.updateScore = function (score) {
 };
 
 Game.actionChanged = function (action) {
-    if (Message.currentMessage.wantedValue === action.newValue &&
+    if (Message.currentMessage.wantedValue === action.value &&
         Message.currentMessage.wantedActionId === action.id) {
 
-        Game.updateScore();
-
-        Message.update();
-
-        Network.actionSuccess();
+        Network.actionSuccess(action.id, action.value);
     }
 };

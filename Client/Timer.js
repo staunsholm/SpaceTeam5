@@ -9,11 +9,12 @@ Timer.init = function (speed) {
 
     function tick() {
         var w = (Timer.time - Date.now()) / 1000 * Timer.speed;
-        console.log(w);
 
         if (w <= -100) {
             Events.timeout.emit();
-            return;
+            w = -100;
+
+            Network.nextMessage();
         }
 
         timerUI.style.width = (100 + w) + "%";
@@ -21,7 +22,7 @@ Timer.init = function (speed) {
         setTimeout(tick, 500);
     }
     tick();
-}
+};
 
 Timer.reset = function () {
     Timer.time = Date.now();

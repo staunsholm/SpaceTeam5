@@ -1,8 +1,6 @@
 var Network = {};
 
-Network.artificialLatency = 100;
-
-Network.joinGame = function (name, onSuccess) {
+Network.joinGame = function (name) {
 
     var socket = io.connect('127.0.0.1:8080');
 
@@ -11,8 +9,14 @@ Network.joinGame = function (name, onSuccess) {
     });
 
     socket.on('game', function (data) {
-        console.log(data);
-        onSuccess(data);
+        Game.data = data;
+
+        socket.emit('ready');
+    });
+
+    socket.on('start', function (message) {
+        Message.update(message);
+        Game.start();
     });
 
     socket.on('score', function (score) {
@@ -23,15 +27,33 @@ Network.joinGame = function (name, onSuccess) {
         Message.update(message);
     });
 
-    socket.on('ping', function (state) {
-        setTimeout(function () {
-            socket.emit('pong', state);
-        }, Network.artificialLatency);
-    });
-
     Network.socket = socket;
 };
 
-Network.actionSuccess = function () {
-    Network.socket.emit('actionSuccess');
+Network.actionSuccess = function (actionId, value) {
+    Network.socket.emit('actionSuccess', {
+        actionId: actionId,
+        value: value
+    });
+};
+
+Network.nextMessage = function () {
+    Network.socket.emit('nextMessage');
+};
+
+Network.windowOnError = window.onerror;
+window.onerror = function (errorMsg, url, lineNumber) {
+    if (Network.socket) {
+        Network.socket.emit('window.onerror', {
+            errorMsg: errorMsg,
+            url: url,
+            lineNumber: lineNumber
+        });
+    }
+
+    if (Network.windowOnError) {
+        return Network.windowOnError(errorMsg, url, lineNumber);
+    }
+
+    return false;
 };

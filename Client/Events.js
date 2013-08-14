@@ -1,7 +1,6 @@
 var Events = {};
 
-Events.timeout = {};
-
 Events.init = function () {
-    smokesignals.convert(Events.timeout);
+    // event sent when Timer times out
+    smokesignals.convert(Events.timeout = {});
 };
