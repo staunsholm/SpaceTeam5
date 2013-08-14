@@ -2,7 +2,7 @@ var Network = {};
 
 Network.joinGame = function (name) {
 
-    var socket = io.connect('127.0.0.1:8080');
+    var socket = io.connect('ec2-54-229-69-55.eu-west-1.compute.amazonaws.com:8080');
 
     socket.on('connect', function () {
         socket.emit('join', name);
