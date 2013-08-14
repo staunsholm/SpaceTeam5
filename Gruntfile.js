@@ -6,7 +6,8 @@ module.exports = function (grunt) {
         shell: {
             server: {
                 options: {
-                    stdout: true
+                    stdout: true,
+                    stderr: true
                 },
                 command: 'nodemon Server/Server.js'
             }
