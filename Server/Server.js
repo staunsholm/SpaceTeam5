@@ -57,5 +57,6 @@ io.sockets.on('connection', function (socket) {
 
     // remove client from connections list
     socket.on('disconnect', function () {
+        socket.game && socket.game.disconnect();
     });
 });

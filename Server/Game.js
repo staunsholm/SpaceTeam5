@@ -109,6 +109,13 @@ function Game(name) {
         this.socket = socket;
         this.socket.actions = getActions();
     };
+
+    this.disconnect = function () {
+        // if no connections to game, then delete game
+        if (io.sockets.clients(name).length === 0) {
+            games[name] = undefined;
+        }
+    };
 }
 
 module.exports.getGame = function (name) {

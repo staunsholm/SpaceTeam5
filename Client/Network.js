@@ -11,6 +11,8 @@ Network.joinGame = function (name) {
     socket.on('game', function (data) {
         Game.data = data;
 
+        alert("ready?");
+
         socket.emit('ready');
     });
 
