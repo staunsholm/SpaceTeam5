@@ -37,17 +37,17 @@ io.sockets.on('connection', function (socket) {
     // client signals he is ready to play
     socket.on('ready', function () {
         // start game when all players are ready
-        socket.game.startGame();
+        socket.game && socket.game.startGame();
     });
 
     // player did something right
     socket.on('actionSuccess', function(data) {
-        socket.game.actionSuccess(data.actionId, data.value);
+        socket.game && socket.game.actionSuccess(data.actionId, data.value);
     });
 
     // send new message to player
     socket.on('nextMessage', function() {
-        socket.game.nextMessage();
+        socket.game && socket.game.nextMessage();
     });
 
     // client threw js exception
