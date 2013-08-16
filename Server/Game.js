@@ -8,7 +8,19 @@ var allActions = [
     {id: 5, label: "Spike Wheel Upfuscator", type: "bool", value: 0},
     {id: 6, label: "Space Radiator", type: "bool", value: 0},
     {id: 7, label: "Lambda Uglifier", type: "bool", value: 0},
-    {id: 8, label: "Liquid Sampler", type: "bool", value: 0}
+    {id: 8, label: "Liquid Sampler", type: "bool", value: 0},
+    {id: 9, label: "Gremlin Flasher", type: "bool", value: 0},
+    {id: 10, label: "Tree Tune Minifier", type: "bool", value: 0},
+    {id: 11, label: "Squash Maker 2000", type: "bool", value: 0},
+    {id: 12, label: "Speed Manipulator", type: "bool", value: 0},
+    {id: 13, label: "Green Light Arranger", type: "bool", value: 0},
+    {id: 14, label: "Warp Drive", type: "bool", value: 0},
+    {id: 15, label: "Sleep Inducer", type: "bool", value: 0},
+    {id: 16, label: "Cargo Drop Off Finder", type: "bool", value: 0},
+    {id: 17, label: "Ultra Blue Spotlight", type: "bool", value: 0},
+    {id: 18, label: "Disco Sound Player", type: "bool", value: 0},
+    {id: 19, label: "Golf Bag Destroyer", type: "bool", value: 0},
+    {id: 20, label: "Sense Shifter", type: "bool", value: 0}
 ];
 
 var actionOnPrefixes = [
@@ -33,7 +45,7 @@ function Game(name) {
     function getActions() {
         var actions = [];
         var actionIndex;
-        for (var i = 0; i < 4; i++) {
+        for (var i = 0; i < 4 && availableActions.length > 0; i++) {
             actionIndex = Math.random() * availableActions.length | 0;
             actions.push(availableActions[actionIndex]);
             usedActions.push(availableActions[actionIndex]);
@@ -112,9 +124,24 @@ function Game(name) {
 
     this.disconnect = function () {
         // if no connections to game, then delete game
-        if (io.sockets.clients(name).length === 0) {
+        if (io.sockets.clients(name).length <= 1) {
+            console.log("no players connected to game '" + name + "'. Deleting.");
             games[name] = undefined;
         }
+
+        // remove used actions from current game
+        if (this.socket.actions && this.socket.actions.length > 0) {
+            var firstAction = this.socket.actions[0];
+            for (var i = 0, l = usedActions.length; i < l; i++) {
+                if (usedActions[i] === firstAction) {
+                    usedActions.splice(i, this.socket.actions.length);
+                    break;
+                }
+            }
+        }
+
+        this.socket.game = null;
+        this.socket = null;
     };
 }
 

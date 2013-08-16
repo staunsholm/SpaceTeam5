@@ -7,7 +7,7 @@ Game.start = function () {
 
     Game.updateScore();
 
-    Timer.init(10);
+    Timer.init(5);
 };
 
 Game.updateScore = function (score) {
