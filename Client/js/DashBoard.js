@@ -35,4 +35,4 @@ DashBoard.init = function (actions) {
 
         ui.appendChild(btn);
     }
-}
+};

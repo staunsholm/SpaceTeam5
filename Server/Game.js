@@ -73,24 +73,39 @@ function Game(name) {
             prefix = actionOnPrefixes[Math.random() * actionOnPrefixes.length | 0];
         }
 
-        var message = {
+        return {
             message: prefix.text + " " + action.label,
             wantedActionId: action.id,
             wantedValue: prefix.value
         };
-
-        return message;
     }
 
     // when all players are ready, start game by sending messages
     var numberOfPlayersReadyToPlay = 0;
     this.startGame = function () {
-        numberOfPlayersReadyToPlay++;
-        if (numberOfPlayersReadyToPlay >= io.sockets.clients(name).length) {
-            var players = io.sockets.clients(name);
-            for (var i = 0, l = players.length; i < l; i++) {
-                players[i].emit('start', createMessage());
+        this.readyToPlay = true;
+
+        var players = io.sockets.clients(name);
+        var i;
+        var l = players.length;
+        var socket;
+
+        // check if all players are ready
+        for (i = 0; i < l; i++) {
+            socket = players[i];
+            if (socket && socket.game && !socket.game.readyToPlay) {
+                return;
             }
+        }
+
+        // start the game
+        for (i = 0; i < l; i++) {
+            players[i].emit('start', createMessage());
+
+            this.socket.emit('debug',
+                "connectedPlayers: " + io.sockets.clients(name).length + "<br>" +
+                    "expectedPlayers: " + numberOfPlayersReadyToPlay + "<br>" +
+                    "usedActions.length: " + usedActions.length);
         }
     };
 
@@ -123,6 +138,8 @@ function Game(name) {
     };
 
     this.disconnect = function () {
+        console.log("disconnect");
+
         // if no connections to game, then delete game
         if (io.sockets.clients(name).length <= 1) {
             console.log("no players connected to game '" + name + "'. Deleting.");
@@ -130,11 +147,17 @@ function Game(name) {
         }
 
         // remove used actions from current game
-        if (this.socket.actions && this.socket.actions.length > 0) {
+        if (this.socket && this.socket.actions && this.socket.actions.length > 0) {
             var firstAction = this.socket.actions[0];
             for (var i = 0, l = usedActions.length; i < l; i++) {
                 if (usedActions[i] === firstAction) {
-                    usedActions.splice(i, this.socket.actions.length);
+                    console.log("usedActions.length: "+ usedActions.length);
+                    var actionsToRelease = usedActions.slice(i, i + this.socket.actions.length);
+                    availableActions = availableActions.concat(actionsToRelease);
+                    usedActions.splice(i, actionsToRelease.length);
+
+                    console.log("released " + actionsToRelease.length + " actions");
+                    console.log("availableActions.length: " + availableActions.length);
                     break;
                 }
             }

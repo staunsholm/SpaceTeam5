@@ -15,18 +15,20 @@ io.enable('browser client etag');          // apply etag caching logic based on 
 io.enable('browser client gzip');          // gzip the file
 io.set('log level', 2);                    // reduce logging
 io.set('transports', ['websocket', 'flashsocket', 'htmlfile', 'xhr-polling', 'jsonp-polling']);
+io.set('heartbeats interval', 29);
+io.set('heartbeat timeout', 60);
 
 var clientErrors = [];
 
 // handle connections
 io.sockets.on('connection', function (socket) {
     // send game info to client
-    socket.on('join', function (name) {
-        socket.game = Game.getGame(name);
+    socket.on('join', function (info) {
+        socket.game = Game.getGame(info.gameName);
 
         socket.game.addPlayer(socket);
 
-        socket.join(name);
+        socket.join(info.gameName);
 
         socket.emit('game', {
             score: socket.game.info.score,

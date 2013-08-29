@@ -1,0 +1,64 @@
+* {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+body {
+    background: #000;
+    color: #fff;
+    border: 20px solid white;
+    margin: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    font-family: sans-serif;
+}
+
+#message {
+    padding: 10px;
+    background: #ccc;
+    color: #000;
+    font-size: 2em;
+    text-align: center;
+}
+
+#score {
+    padding: 20px;
+    background: red;
+    width: 50%;
+    display: inline-block;
+}
+
+#debug {
+    width: 50%;
+    background: darkmagenta;
+    display: inline-block;
+    padding: 20px;
+}
+
+#ui {
+}
+
+#ui button {
+    width: 50%;
+    height: 50%;
+    border: 1px solid black;
+    background: grey;
+    font-size: 2em;
+    padding: 30px;
+}
+#ui button:hover {
+    background: darkgrey;
+}
+#ui button.on {
+    background: white;
+}
+#timer {
+    background: lightgreen;
+    height: 2px;
+    width: 100%;
+    transition: width 0.25s;
+    -webkit-transition: width 0.25s;
+}
