@@ -1,9 +1,20 @@
+/**
+ * tasks:
+ * ------
+ * grunt server
+ * grunt publish-server
+ * grunt publish-client
+ *
+**/
+
 module.exports = function (grunt) {
 
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         shell: {
+
+            // start the multiplayer server
             server: {
                 options: {
                     stdout: true,
@@ -13,6 +24,8 @@ module.exports = function (grunt) {
             }
         },
         sftp: {
+
+            // publish server to amazon
             'publish-server': {
                 files: {
                     './': ['Server/**', 'package.json']
@@ -29,6 +42,8 @@ module.exports = function (grunt) {
                 }
             }
         },
+
+        // minification
         uglify: {
             options: {
                 banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
@@ -39,6 +54,8 @@ module.exports = function (grunt) {
             }
         },
         ftpscript: {
+
+            // publish client files
             'publish-client': {
                 options: {
                     host: 'wsw6.surftown.dk',
@@ -63,13 +80,13 @@ module.exports = function (grunt) {
         }
     });
 
-    // Load the plugin that provides the "uglify" task.
+    // plugins
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-shell');
     grunt.loadNpmTasks('grunt-ssh');
     grunt.loadNpmTasks('grunt-ftpscript');
 
-    // Default task(s).
+    // tasks
     grunt.registerTask('default', []);
     grunt.registerTask('server', ['shell']);
     grunt.registerTask('publish-server', ['sftp']);
